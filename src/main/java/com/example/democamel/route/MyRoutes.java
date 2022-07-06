@@ -2,6 +2,8 @@ package com.example.democamel.route;
 
 import com.example.democamel.MyStrategy;
 import com.example.democamel.model.OrderFromCsv;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.stereotype.Component;
@@ -29,11 +31,17 @@ public class MyRoutes extends RouteBuilder {
 
         from("file-watch:in")
                 .unmarshal()
-//                .csv()
                 .bindy(BindyType.Csv, OrderFromCsv.class)
                 .split(body())
-                .aggregate(new MyStrategy())
-                .constant(true)
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String region = exchange.getIn().getBody(OrderFromCsv.class).getRegion();
+                        exchange.getIn().setHeader("region",region);
+                    }
+                })
+                .aggregate(header("region"),new MyStrategy())
+//                .constant(true)
                 .completionInterval(500)
                 .log(body().toString())
                 .to("mock:out");

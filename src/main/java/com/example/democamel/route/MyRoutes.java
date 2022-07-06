@@ -31,8 +31,11 @@ public class MyRoutes extends RouteBuilder {
                 .unmarshal()
 //                .csv()
                 .bindy(BindyType.Csv, OrderFromCsv.class)
-                .split(body(), new MyStrategy())
-//                .log(body().toString())
+                .split(body())
+                .aggregate(new MyStrategy())
+                .constant(true)
+                .completionInterval(500)
+                .log(body().toString())
                 .to("mock:out");
 
     }

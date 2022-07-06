@@ -1,49 +1,35 @@
 package com.example.democamel;
 
 import com.example.democamel.model.OrderFromCsv;
+import com.example.democamel.model.OrderTotals;
+import com.example.democamel.model.OrdersAggregatedByRegion;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
-
+@Slf4j
 public class MyStrategy implements AggregationStrategy {
 
     @Override
     public Exchange aggregate(Exchange previous, Exchange current) {
-
-        //TODO
-        ///From Csv to FilterOnline to here to RegionReport table and RegionReport Csv
-        //  region:     country:   columnName-value(RegionReport)
-        //    |            |           |       |
-        //    v            v           v       v
-//      Map<String, Map<String, Map<String, String>>> mapRegionMapCountry;
-
-
-//                                                                if(fileByRegionNameDoesntExist){
-//                                                                    createFile();
-//                                                                        if(rowByCountryNameDoesntExist){
-//                                                                            createRow saveDataInRow();
-//                                                                        } else {
-//                                                                            readAndUpdateDataInRow();
-//                                                                        }
-//                                                                else{
-//                                                                   findFile openFile FindRow ReadAndUpdateData();
-//                                                                    }
-//                                                                }
-
         if (previous == null) {
+            var ordersAggregatedByRegion = new OrdersAggregatedByRegion();
 
-            OrderFromCsv curr = (OrderFromCsv) current.getIn().getBody();
-            curr.setOrderId(1L);
-            System.out.println(curr.getOrderId());
+            var orderFromCsv = current.getIn().getBody(OrderFromCsv.class);
+            ordersAggregatedByRegion.getRegionToOrderTotals().put(
+                    orderFromCsv.getRegion(),
+                    new OrderTotals(orderFromCsv.getUnitsSold()));
+
+            current.getIn().setBody(ordersAggregatedByRegion, OrdersAggregatedByRegion.class);
             return current;
-
-        } else {
-
-            OrderFromCsv prev = (OrderFromCsv) previous.getIn().getBody();
-            prev.setOrderId(prev.getOrderId() + 1);
-            System.out.println(prev.getOrderId());
-            return previous;
-
         }
+
+        var ordersAggregatedByRegion = previous.getIn().getBody(OrdersAggregatedByRegion.class);
+        var orderFromCsv = current.getIn().getBody(OrderFromCsv.class);
+        ordersAggregatedByRegion.getRegionToOrderTotals().put( // todo add, instead of just putting
+                orderFromCsv.getRegion(),
+                new OrderTotals(orderFromCsv.getUnitsSold()));
+
+        return previous;
     }
 }

@@ -4,8 +4,6 @@ import com.example.democamel.model.OrderFromCsv;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
-import java.util.Map;
-
 
 public class MyStrategy implements AggregationStrategy {
 
@@ -17,7 +15,7 @@ public class MyStrategy implements AggregationStrategy {
         //  region:     country:   columnName-value(RegionReport)
         //    |            |           |       |
         //    v            v           v       v
-        Map<String, Map<String, Map<String, String>>> mapRegionMapCountry;
+//      Map<String, Map<String, Map<String, String>>> mapRegionMapCountry;
 
 
 //                                                                if(fileByRegionNameDoesntExist){

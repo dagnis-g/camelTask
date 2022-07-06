@@ -19,6 +19,18 @@ public class MyStrategy implements AggregationStrategy {
         //    v            v           v       v
         Map<String, Map<String, Map<String, String>>> mapRegionMapCountry;
 
+        //Or instead of map, use csv -
+        //               check if file exists by regionName - if(false){
+        //                                                         make file and save first exchange
+        //                                                     } else {
+        //                                                         check if row - country row exists
+        //                                                                if(false){
+        //                                                                      save row
+        //                                                                } else {
+        //                                                                      read and update row
+        //                                                                       }
+
+
         if (previous == null) {
 
             OrderFromCsv curr = (OrderFromCsv) current.getIn().getBody();

@@ -13,7 +13,7 @@ public class MyStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange previous, Exchange current) {
 
         //TODO
-        ///What
+        ///From Csv to FilterOnline to here to RegionReport table and RegionReport Csv
         //  region:     country:   columnName-value(RegionReport)
         //    |            |           |       |
         //    v            v           v       v

@@ -13,7 +13,7 @@ public class ProcessorRegions implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         OrdersAggregatedByCountry orderByCountry = exchange.getIn().getBody(OrdersAggregatedByCountry.class);
-        String country = exchange.getIn().getHeader("country",String.class);
+        String country = exchange.getIn().getHeader("country", String.class);
         OrderTotals orderTotals = orderByCountry.getCountryToOrderTotals().get(country);
         BigDecimal soldTotal = orderTotals.getUnitsSoldTotal();
         BigDecimal priceTotal = orderTotals.getUnitsPriceTotal();
@@ -24,13 +24,13 @@ public class ProcessorRegions implements Processor {
         orderForCsv.setCountry(orderTotals.getCountry());
         orderForCsv.setOrderCount(totalOrders);
         orderForCsv.setAverageUnitsSold(soldTotal.divide(totalOrders, RoundingMode.HALF_UP));
-        orderForCsv.setAverageUnitPrice(priceTotal.divide(totalOrders,RoundingMode.HALF_UP));
-        orderForCsv.setAverageUnitCost(costTotal.divide(totalOrders,RoundingMode.HALF_UP));
-        orderForCsv.setTotalRevenue(priceTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
-        orderForCsv.setTotalCost(costTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
-        orderForCsv.setTotalProfit(soldTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
+        orderForCsv.setAverageUnitPrice(priceTotal.divide(totalOrders, RoundingMode.HALF_UP));
+        orderForCsv.setAverageUnitCost(costTotal.divide(totalOrders, RoundingMode.HALF_UP));
+        orderForCsv.setTotalRevenue(priceTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
+        orderForCsv.setTotalCost(costTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
+        orderForCsv.setTotalProfit(soldTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
 
-        exchange.getIn().setBody(orderForCsv,OrderForCsv.class);
+        exchange.getIn().setBody(orderForCsv, OrderForCsv.class);
 
     }
 }

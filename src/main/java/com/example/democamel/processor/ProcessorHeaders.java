@@ -9,7 +9,7 @@ public class ProcessorHeaders implements Processor {
     public void process(Exchange exchange) throws Exception {
         String region = exchange.getIn().getBody(OrderFromCsv.class).getRegion();
         String country = exchange.getIn().getBody(OrderFromCsv.class).getCountry();
-        exchange.getIn().setHeader("region",region);
-        exchange.getIn().setHeader("country",country);
+        exchange.getIn().setHeader("region", region);
+        exchange.getIn().setHeader("country", country);
     }
 }

@@ -10,13 +10,13 @@ import java.util.List;
 public class AggregateRegions implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange previous, Exchange current) {
-        if (previous == null){
+        if (previous == null) {
             OrdersAggregatedByRegion ordersAggregatedByRegion = new OrdersAggregatedByRegion();
             OrderForCsv orderForCsv = current.getIn().getBody(OrderForCsv.class);
-            String region = current.getIn().getHeader("region",String.class);
+            String region = current.getIn().getHeader("region", String.class);
 
             ordersAggregatedByRegion.getAggregatedRegions().put(region, List.of(orderForCsv));
-            current.getIn().setBody(ordersAggregatedByRegion,OrdersAggregatedByRegion.class);
+            current.getIn().setBody(ordersAggregatedByRegion, OrdersAggregatedByRegion.class);
 
             return current;
         }
@@ -24,11 +24,11 @@ public class AggregateRegions implements AggregationStrategy {
         OrdersAggregatedByRegion ordersAggregatedByRegion = previous.getIn().getBody(OrdersAggregatedByRegion.class);
         OrderForCsv orderForCsv = current.getIn().getBody(OrderForCsv.class);
 
-        String region = current.getIn().getHeader("region",String.class);
+        String region = current.getIn().getHeader("region", String.class);
 
-        List<OrderForCsv> ordersForCsv = ordersAggregatedByRegion.getAggregatedRegions().getOrDefault(region,List.of(orderForCsv));
+        List<OrderForCsv> ordersForCsv = ordersAggregatedByRegion.getAggregatedRegions().getOrDefault(region, List.of(orderForCsv));
         ordersForCsv.add(orderForCsv);
-        ordersAggregatedByRegion.getAggregatedRegions().put(region,ordersForCsv);
+        ordersAggregatedByRegion.getAggregatedRegions().put(region, ordersForCsv);
 
         return previous;
     }

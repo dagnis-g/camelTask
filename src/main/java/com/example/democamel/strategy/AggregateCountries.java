@@ -24,9 +24,7 @@ public class AggregateCountries implements AggregationStrategy {
             BigDecimal unitPrice = orderFromCsv.getUnitPrice();
             BigDecimal unitCost = orderFromCsv.getUnitCost();
 
-            ordersAggregatedByCountry.getCountryToOrderTotals().put(
-                    country,
-                    new OrderTotals(region,country, unitsSold,unitPrice,unitCost,BigDecimal.valueOf(1)));
+            ordersAggregatedByCountry.getCountryToOrderTotals().put(country, new OrderTotals(region, country, unitsSold, unitPrice, unitCost, BigDecimal.valueOf(1)));
 
             current.getIn().setBody(ordersAggregatedByCountry, OrdersAggregatedByCountry.class);
             return current;
@@ -41,10 +39,7 @@ public class AggregateCountries implements AggregationStrategy {
         BigDecimal unitPrice = orderFromCsv.getUnitPrice();
         BigDecimal unitCost = orderFromCsv.getUnitCost();
 
-        OrderTotals prevOrder = ordersAggregatedByCountry.getCountryToOrderTotals().getOrDefault(
-                country,
-                new OrderTotals(
-                        region,country,BigDecimal.valueOf(0),BigDecimal.valueOf(0),BigDecimal.valueOf(0),BigDecimal.valueOf(1)));
+        OrderTotals prevOrder = ordersAggregatedByCountry.getCountryToOrderTotals().getOrDefault(country, new OrderTotals(region, country, BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(1)));
 
         BigDecimal unitsSoldTotal = prevOrder.getUnitsSoldTotal();
         BigDecimal unitsPriceTotal = prevOrder.getUnitsPriceTotal();

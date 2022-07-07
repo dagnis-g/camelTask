@@ -28,7 +28,7 @@ public class AggregateRegions implements AggregationStrategy {
 
         List<OrderForCsv> ordersForCsv = ordersAggregatedByRegion.getAggregatedRegions().getOrDefault(region,List.of(orderForCsv));
         ordersForCsv.add(orderForCsv);
-        ordersAggregatedByRegion.getAggregatedRegions().putIfAbsent(region,ordersForCsv);
+        ordersAggregatedByRegion.getAggregatedRegions().put(region,ordersForCsv);
 
         return previous;
     }

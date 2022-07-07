@@ -1,5 +1,7 @@
 package com.example.democamel.route;
 
+import com.example.democamel.processor.ProcessorHeaders;
+import com.example.democamel.processor.ProcessorRegions;
 import com.example.democamel.strategy.AggregateCountries;
 import com.example.democamel.strategy.AggregateRegions;
 import com.example.democamel.model.OrderForCsv;
@@ -40,42 +42,11 @@ public class MyRoutes extends RouteBuilder {
                 .unmarshal()
                 .bindy(BindyType.Csv, OrderFromCsv.class)
                 .split(body())
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        String region = exchange.getIn().getBody(OrderFromCsv.class).getRegion();
-                        String country = exchange.getIn().getBody(OrderFromCsv.class).getCountry();
-                        exchange.getIn().setHeader("region",region);
-                        exchange.getIn().setHeader("country",country);
-                    }
-                })
+                .process(new ProcessorHeaders())
                 .aggregate(header("country"),new AggregateCountries())
                 .completionTimeout(500)
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        OrdersAggregatedByCountry orderByCountry = exchange.getIn().getBody(OrdersAggregatedByCountry.class);
-                        String country = exchange.getIn().getHeader("country",String.class);
-                        OrderTotals  orderTotals = orderByCountry.getCountryToOrderTotals().get(country);
-                        BigDecimal soldTotal = orderTotals.getUnitsSoldTotal();
-                        BigDecimal priceTotal = orderTotals.getUnitsPriceTotal();
-                        BigDecimal costTotal = orderTotals.getUnitCostTotal();
-                        BigDecimal totalOrders = orderTotals.getTotalOrders();
-
-                        OrderForCsv orderForCsv = new OrderForCsv();
-                        orderForCsv.setCountry(orderTotals.getCountry());
-                        orderForCsv.setOrderCount(totalOrders);
-                        orderForCsv.setAverageUnitsSold(soldTotal.divide(totalOrders,RoundingMode.HALF_UP));
-                        orderForCsv.setAverageUnitPrice(priceTotal.divide(totalOrders,RoundingMode.HALF_UP));
-                        orderForCsv.setAverageUnitCost(costTotal.divide(totalOrders,RoundingMode.HALF_UP));
-                        orderForCsv.setTotalRevenue(priceTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
-                        orderForCsv.setTotalCost(costTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
-                        orderForCsv.setTotalProfit(soldTotal.divide(BigDecimal.valueOf(1000000),RoundingMode.HALF_UP));
-
-                        exchange.getIn().setBody(orderForCsv,OrderForCsv.class);
-
-                    }
-                })
+                .process(new ProcessorRegions())
+                .log(body().toString())
                 .aggregate(header("region"), new AggregateRegions())
                 .completionTimeout(500)
                 .log(body().toString())

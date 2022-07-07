@@ -20,8 +20,6 @@ public class MyStrategy implements AggregationStrategy {
                     orderFromCsv.getRegion(),
                     new OrderTotals(orderFromCsv.getUnitsSold()));
 
-            current.getIn().setHeader("unitsSold",orderFromCsv.getUnitsSold());
-
             current.getIn().setBody(ordersAggregatedByRegion, OrdersAggregatedByRegion.class);
             return current;
         }
@@ -29,12 +27,13 @@ public class MyStrategy implements AggregationStrategy {
         var ordersAggregatedByRegion = previous.getIn().getBody(OrdersAggregatedByRegion.class);
         var orderFromCsv = current.getIn().getBody(OrderFromCsv.class);
 
-        Integer prevUnitsSold = previous.getIn().getHeader("unitsSold",Integer.class);
+        OrderTotals prevOrder = ordersAggregatedByRegion.getRegionToOrderTotals().get(orderFromCsv.getRegion());
+        Integer prevUnitsSold = prevOrder.getUnitsSoldTotal();
 
         ordersAggregatedByRegion.getRegionToOrderTotals().put( // todo add, instead of just putting
                 orderFromCsv.getRegion(),
                 new OrderTotals(orderFromCsv.getUnitsSold()+prevUnitsSold));
-        previous.getIn().setHeader("unitsSold",orderFromCsv.getUnitsSold()+prevUnitsSold);
+
 
         return previous;
     }

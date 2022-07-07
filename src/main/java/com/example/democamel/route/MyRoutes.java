@@ -38,7 +38,6 @@ public class MyRoutes extends RouteBuilder {
                 .aggregate(header("country"), new AggregateCountries())
                 .completionTimeout(500)
                 .process(new ProcessorRegions())
-                .log(body().toString())
                 .aggregate(header("region"), new AggregateRegions())
                 .completionTimeout(500)
                 .log(body().toString())

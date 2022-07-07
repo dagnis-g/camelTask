@@ -28,8 +28,8 @@ public class OrderFromCsv implements Serializable {
     private Long orderId;
     @DataField(pos = 8, pattern = "MM/dd/yyyy")
     private Date shipDate;
-    @DataField(pos = 9)
-    private Integer unitsSold;
+    @DataField(pos = 9, trim = true, precision = 2, pattern = "00.00")
+    private BigDecimal unitsSold;
     @DataField(pos = 10, trim = true, precision = 2, pattern = "00.00")
     private BigDecimal unitPrice;
     @DataField(pos = 11, trim = true, precision = 2, pattern = "00.00")

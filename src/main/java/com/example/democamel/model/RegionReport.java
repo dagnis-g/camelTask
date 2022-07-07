@@ -26,7 +26,6 @@ public class RegionReport {
     private BigDecimal totalCost;
     private BigDecimal totalProfit;
     private String csvFileName;
-    //should be timestamp
     private LocalDate processingDate;
 
 

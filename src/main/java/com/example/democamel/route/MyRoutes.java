@@ -29,7 +29,7 @@ public class MyRoutes extends RouteBuilder {
 //                .bean(HandleOrders.class, "addOnlineOrdersToDb")
 //                .log(body().toString());
 
-        from("file-watch:in")
+        from("file-watch:in?recursive=false")
                 .unmarshal()
                 .bindy(BindyType.Csv, OrderFromCsv.class)
                 .split(body())

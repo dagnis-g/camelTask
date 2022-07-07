@@ -9,6 +9,6 @@ import java.util.Map;
 @Data
 public class OrdersAggregatedByRegion {
 
-    private Map<String, List< OrderForCsv>> aggregatedRegions = new HashMap<>();
+    private Map<String, List<OrderForCsv>> aggregatedRegions = new HashMap<>();
 
 }

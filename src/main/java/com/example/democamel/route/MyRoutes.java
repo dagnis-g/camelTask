@@ -3,8 +3,8 @@ package com.example.democamel.route;
 import com.example.democamel.model.OrderForCsv;
 import com.example.democamel.model.OrderFromCsv;
 import com.example.democamel.model.OrdersAggregatedByRegion;
+import com.example.democamel.processor.ProcessorAveragesAndTotals;
 import com.example.democamel.processor.ProcessorHeaders;
-import com.example.democamel.processor.ProcessorRegions;
 import com.example.democamel.strategy.AggregateCountries;
 import com.example.democamel.strategy.AggregateRegions;
 import org.apache.camel.Exchange;
@@ -43,10 +43,10 @@ public class MyRoutes extends RouteBuilder {
                 .process(new ProcessorHeaders())
                 .aggregate(header("country"), new AggregateCountries())
                 .completionTimeout(500)
-                .process(new ProcessorRegions())
+                .process(new ProcessorAveragesAndTotals())
                 .aggregate(header("region"), new AggregateRegions())
                 .completionTimeout(500)
-                .log(body().toString())
+//                .log(body().toString())
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
@@ -55,14 +55,17 @@ public class MyRoutes extends RouteBuilder {
                         exchange.getIn().setBody(orderForCsvList);
                     }
                 })
+                .log(body().toString())
                 .choice()
                 .when(simple("${header.region} == 'Asia'"))
+//                .split(body())
                 .marshal().csv()
 //                .marshal().bindy(BindyType.Csv, OrderForCsv.class)
-                .to("file:output/asia")
-                .otherwise()
+                .to("file:output/asia");
+
+//                .otherwise()
 //                .to("file:output");
-                .to("mock:out");
+//                .to("mock:out");
     }
 
 }

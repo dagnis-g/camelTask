@@ -9,7 +9,7 @@ import org.apache.camel.Processor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class ProcessorRegions implements Processor {
+public class ProcessorAveragesAndTotals implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         OrdersAggregatedByCountry orderByCountry = exchange.getIn().getBody(OrdersAggregatedByCountry.class);

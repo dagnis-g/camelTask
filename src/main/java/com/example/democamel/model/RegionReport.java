@@ -1,16 +1,20 @@
 package com.example.democamel.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegionReport {
 
     @Id
@@ -26,7 +30,6 @@ public class RegionReport {
     private BigDecimal totalCost;
     private BigDecimal totalProfit;
     private String csvFileName;
-    private LocalDate processingDate;
-
+    private LocalDateTime processingDate;
 
 }

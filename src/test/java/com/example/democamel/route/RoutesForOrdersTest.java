@@ -25,16 +25,14 @@ import java.util.List;
 @SpringBootTest
 @CamelSpringBootTest
 @MockEndpoints("direct:onlineOrdersToDb")
-class MyRoutesTest {
+class RoutesForOrdersTest {
     @Autowired
     private ProducerTemplate template;
 
     @EndpointInject("mock:direct:onlineOrdersToDb")
     private MockEndpoint mock;
 
-    //    @EndpointInject("mock:file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}")
-//    private MockEndpoint mockToCsv;
-    @EndpointInject("mock:fileOut")
+    @EndpointInject("mock:file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}")
     private MockEndpoint mockToCsv;
 
     @Autowired

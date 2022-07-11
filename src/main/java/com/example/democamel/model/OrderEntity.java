@@ -1,7 +1,6 @@
 package com.example.democamel.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,7 +9,6 @@ import java.util.Date;
 
 @Entity
 @Data
-@NoArgsConstructor
 public class OrderEntity {
 
     @Id
@@ -23,5 +21,5 @@ public class OrderEntity {
     private BigDecimal totalProfit;
     private String itemType;
     private String country;
-    
+
 }

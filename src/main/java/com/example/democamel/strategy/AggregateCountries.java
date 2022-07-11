@@ -28,9 +28,9 @@ public class AggregateCountries implements AggregationStrategy {
             BigDecimal orderCost = orderFromCsv.getTotalCost();
             BigDecimal orderProfit = orderFromCsv.getTotalProfit();
 
-            OrderTotals orderTotals = new OrderTotals(
+            var orderTotals = new OrderTotals(
                     region, country, unitsSold, unitPrice, unitCost, BigDecimal.valueOf(1), orderRevenue, orderCost, orderProfit);
-            
+
             ordersAggregatedByCountry.getCountryToOrderTotals().putIfAbsent(country, orderTotals);
 
             current.getIn().setBody(ordersAggregatedByCountry, OrdersAggregatedByCountry.class);

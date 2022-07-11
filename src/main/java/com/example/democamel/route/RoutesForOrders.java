@@ -4,7 +4,7 @@ import com.example.democamel.handler.HandleOrders;
 import com.example.democamel.handler.HandleRegionReportTable;
 import com.example.democamel.model.OrderFromCsv;
 import com.example.democamel.model.OrderReportCsv;
-import com.example.democamel.model.OrdersAggregatedByRegion;
+import com.example.democamel.processor.ProcessRegionAggregateToList;
 import com.example.democamel.processor.ProcessorAveragesAndTotals;
 import com.example.democamel.processor.ProcessorHeaders;
 import com.example.democamel.strategy.AggregateCountries;
@@ -13,10 +13,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
-public class MyRoutes extends RouteBuilder {
+public class RoutesForOrders extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -40,13 +38,9 @@ public class MyRoutes extends RouteBuilder {
                 .process(new ProcessorAveragesAndTotals())
                 .aggregate(header("region"), new AggregateRegions())
                 .completionTimeout(500)
-                .process(exchange -> {
-                    String region = exchange.getIn().getHeader("region", String.class);
-                    List<OrderReportCsv> OrderReportCsvList = exchange.getIn().getBody(OrdersAggregatedByRegion.class).getAggregatedRegions().get(region);
-                    exchange.getIn().setBody(OrderReportCsvList);
-                })
+                .process(new ProcessRegionAggregateToList())
                 .marshal().bindy(BindyType.Csv, OrderReportCsv.class)
-                .to("file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}");
+                .to("file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}.csv").id("fileOut");
 
 
         from("file:output/reports?noop=true")

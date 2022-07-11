@@ -24,7 +24,7 @@ import java.util.List;
 
 @SpringBootTest
 @CamelSpringBootTest
-@MockEndpoints
+@MockEndpoints("direct:onlineOrdersToDb")
 class MyRoutesTest {
     @Autowired
     private ProducerTemplate template;
@@ -32,7 +32,9 @@ class MyRoutesTest {
     @EndpointInject("mock:direct:onlineOrdersToDb")
     private MockEndpoint mock;
 
-    @EndpointInject("mock:file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}")
+    //    @EndpointInject("mock:file:output/reports?fileName=${header.region}_${date:now:yyyy-MM-dd HH-mm-ss}")
+//    private MockEndpoint mockToCsv;
+    @EndpointInject("mock:fileOut")
     private MockEndpoint mockToCsv;
 
     @Autowired
@@ -49,19 +51,10 @@ class MyRoutesTest {
     }
 
     @Test
-    void shouldUnmarshalCorrectClassObjectFromFile() {
+    void shouldUnmarshalToOrderFromCsvAndSkipColumnHeaders() throws InterruptedException {
+        mock.expectedBodiesReceived("OrderFromCsv(region=Australia and Oceania, country=Australia, itemType=Meat, salesChannel=Online, orderPriority=C, orderDate=Mon Apr 04 00:00:00 EEST 2011, orderId=451691138, shipDate=Mon May 23 00:00:00 EEST 2011, unitsSold=4300, unitPrice=421.89, unitCost=364.69, totalRevenue=1814127.00, totalCost=1568167.00, totalProfit=245960.00)");
         template.sendBody("file:in", "Region,Country,Item Type,Sales Channel,Order Priority,Order Date,Order ID,Ship Date,Units Sold,Unit Price,Unit Cost,Total Revenue,Total Cost,Total Profit\n" +
                 "Australia and Oceania,Australia,Meat,Online,C,4/4/2011,451691138,5/23/2011,4300,421.89,364.69,1814127.00,1568167.00,245960.00");
-        mock.allMessages().body().isInstanceOf(OrderFromCsv.class);
-    }
-
-    @Test
-    void shouldSkipColumnHeadersInCsvFile() throws InterruptedException {
-        mock.setExpectedMessageCount(3);
-        template.sendBody("file:in", "Region,Country,Item Type,Sales Channel,Order Priority,Order Date,Order ID,Ship Date,Units Sold,Unit Price,Unit Cost,Total Revenue,Total Cost,Total Profit\n" +
-                "Australia and Oceania,Australia,Meat,Online,C,4/4/2011,451691138,5/23/2011,4300,421.89,364.69,1814127.00,1568167.00,245960.00\n" +
-                "Asia,Tajikistan,Personal Care,Online,L,7/12/2018,144177377,8/1/2018,4145,81.73,56.67,338770.85,234897.15,103873.70\n" +
-                "Sub-Saharan Africa,Mozambique,Cosmetics,Offline,H,7/6/2011,982716166,7/17/2011,6407,437.20,263.33,2801140.40,1687155.31,1113985.09");
         mock.assertIsSatisfied();
     }
 
@@ -110,7 +103,7 @@ class MyRoutesTest {
     }
 
     @Test
-    void shouldAddRegionAndCountryHeader() {
+    void shouldAddRegionAndCountryHeader() throws InterruptedException {
         OrderFromCsv order = new OrderFromCsv("Australia and Oceania",
                 "Australia",
                 "Meat",
@@ -127,8 +120,10 @@ class MyRoutesTest {
                 BigDecimal.valueOf(4300L)
         );
         template.sendBody("direct:aggregateRegionReports", order);
-        mockToCsv.expectedHeaderReceived("region", "Australia and Oceania");
+        mockToCsv.expectedHeaderReceived("region1", "Australia and Oceania");
         mockToCsv.expectedHeaderReceived("country", "Australia");
+        mockToCsv.expectedBodiesReceived("ds");
+        mockToCsv.assertIsSatisfied();
     }
 
     @Test

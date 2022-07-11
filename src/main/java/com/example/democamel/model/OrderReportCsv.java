@@ -1,12 +1,16 @@
 package com.example.democamel.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @CsvRecord(separator = ",", skipFirstLine = true, generateHeaderColumns = true)
 public class OrderReportCsv {
 

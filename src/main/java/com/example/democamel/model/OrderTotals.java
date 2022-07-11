@@ -15,5 +15,8 @@ public class OrderTotals {
     private BigDecimal unitsPriceTotal;
     private BigDecimal unitCostTotal;
     private BigDecimal totalOrders;
+    private BigDecimal totalRevenue;
+    private BigDecimal totalCost;
+    private BigDecimal totalProfit;
 
 }

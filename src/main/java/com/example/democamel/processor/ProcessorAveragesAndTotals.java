@@ -20,18 +20,23 @@ public class ProcessorAveragesAndTotals implements Processor {
         BigDecimal costTotal = orderTotals.getUnitCostTotal();
         BigDecimal totalOrders = orderTotals.getTotalOrders();
 
-        OrderReportCsv orderReportCsv = new OrderReportCsv();
-        orderReportCsv.setCountry(orderTotals.getCountry());
-        orderReportCsv.setOrderCount(totalOrders);
-        orderReportCsv.setAverageUnitsSold(soldTotal.divide(totalOrders, RoundingMode.HALF_UP));
-        orderReportCsv.setAverageUnitPrice(priceTotal.divide(totalOrders, RoundingMode.HALF_UP));
-        orderReportCsv.setAverageUnitCost(costTotal.divide(totalOrders, RoundingMode.HALF_UP));
-//        orderForCsv.setTotalRevenue(priceTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
-//        orderForCsv.setTotalCost(costTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
-//        orderForCsv.setTotalProfit(soldTotal.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_UP));
-        orderReportCsv.setTotalRevenue(priceTotal);
-        orderReportCsv.setTotalCost(costTotal);
-        orderReportCsv.setTotalProfit(soldTotal);
+        BigDecimal ONE_MILLION = BigDecimal.valueOf(1000000L);
+        BigDecimal avgSold = soldTotal.divide(totalOrders, RoundingMode.HALF_UP);
+        BigDecimal avgPrice = priceTotal.divide(totalOrders, RoundingMode.HALF_UP);
+        BigDecimal avgCost = costTotal.divide(totalOrders, RoundingMode.HALF_UP);
+        BigDecimal totalRevenueInMil = orderTotals.getTotalRevenue().divide(ONE_MILLION, RoundingMode.HALF_UP);
+        BigDecimal totalCostInMil = orderTotals.getTotalCost().divide(ONE_MILLION, RoundingMode.HALF_UP);
+        BigDecimal totalProfitInMil = orderTotals.getTotalProfit().divide(ONE_MILLION, RoundingMode.HALF_UP);
+
+
+        OrderReportCsv orderReportCsv = new OrderReportCsv(country,
+                totalOrders,
+                avgSold,
+                avgPrice,
+                avgCost,
+                totalRevenueInMil,
+                totalCostInMil,
+                totalProfitInMil);
 
         exchange.getIn().setBody(orderReportCsv, OrderReportCsv.class);
 
